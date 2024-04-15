@@ -33,7 +33,8 @@ from viscid.vutil import subclass_spider
 from viscid import sliceutil
 
 
-__all__ = ['NonuniformFullArrayError', 'arrays2crds', 'wrap_crds', 'extend_arr']
+__all__ = ['NonuniformFullArrayError',
+           'arrays2crds', 'wrap_crds', 'extend_arr']
 
 
 class NonuniformFullArrayError(ValueError):
@@ -97,11 +98,13 @@ def arrays2crds(crd_arrs, crd_type='AUTO', crd_names="xyzuvw", **kwargs):
 
     return crds
 
+
 def lookup_crds_type(type_name):
     for cls in subclass_spider(Coordinates):
         if cls.istype(type_name):
             return cls
     return None
+
 
 def wrap_crds(crdtype, clist, **kwargs):
     """  """
@@ -114,6 +117,7 @@ def wrap_crds(crdtype, clist, **kwargs):
         return crdtype(clist, **kwargs)
     except TypeError:
         raise NotImplementedError("can not decipher crds: {0}".format(crdtype))
+
 
 def extend_arr(x, n=1, cell_fraction=1.0, full_arr=True, default_width=1e-5,
                width_arr=None):
@@ -235,7 +239,8 @@ class Coordinates(object):
             elif allow_invalid:
                 ret.append('')
             else:
-                raise ValueError("{0} not in axes ({1})".format(ax, self._axes))
+                raise ValueError(
+                    "{0} not in axes ({1})".format(ax, self._axes))
         return ret
 
     def get_unit(self, axis):
@@ -298,12 +303,15 @@ class StructuredCrds(Coordinates):
     @property
     def xl_nc(self):
         return self.get_xl()
+
     @property
     def xh_nc(self):
         return self.get_xh()
+
     @property
     def L_nc(self):
         return self.get_L()
+
     @property
     def min_dx_nc(self):
         return self.get_min_dx()
@@ -311,12 +319,15 @@ class StructuredCrds(Coordinates):
     @property
     def xl_cc(self):
         return self.get_xl(center='cell')
+
     @property
     def xh_cc(self):
         return self.get_xh(center='cell')
+
     @property
     def L_cc(self):
         return self.get_L(center='cell')
+
     @property
     def min_dx_cc(self):
         return self.get_min_dx(center='cell')
@@ -411,7 +422,8 @@ class StructuredCrds(Coordinates):
 
             if len(ci) > 2:
                 if ci[2] is not None and len(ci[2].shape) != 1:
-                    raise ValueError("Coordinates created with mangled cc input")
+                    raise ValueError(
+                        "Coordinates created with mangled cc input")
                 self._src_crds_cc[axis.lower()] = ci[2]
 
     def apply_reflections(self):
@@ -524,7 +536,8 @@ class StructuredCrds(Coordinates):
             for j, d in enumerate(self.axes):  # pylint: disable=W0612
                 if i == j:
                     self._Pcrds[a + sfx][j] = crds_nc[i][:-1]
-                    self._Pcrds[a.upper() + sfx][j] = self._sm1(crds_nc_shaped[i])
+                    self._Pcrds[a.upper() +
+                                sfx][j] = self._sm1(crds_nc_shaped[i])
                 else:
                     self._Pcrds[a + sfx][j] = crds_cc[i]
                     self._Pcrds[a.upper() + sfx][j] = crds_cc_shaped[i]
@@ -537,7 +550,8 @@ class StructuredCrds(Coordinates):
             for j in range(3):
                 if i != j:
                     self._Pcrds[a + sfx][j] = crds_nc[i][:-1]
-                    self._Pcrds[a.upper() + sfx][j] = self._sm1(crds_nc_shaped[i])
+                    self._Pcrds[a.upper() +
+                                sfx][j] = self._sm1(crds_nc_shaped[i])
                 else:
                     self._Pcrds[a + sfx][j] = crds_cc[i]
                     self._Pcrds[a.upper() + sfx][j] = crds_cc_shaped[i]
@@ -654,14 +668,16 @@ class StructuredCrds(Coordinates):
             else:
                 assert sel == np.newaxis and full_newdim_flags[i]
                 if cc:
-                    crd_arrs_nc.append(np.array([-1e-1, 1e-1], dtype=self.dtype))
+                    crd_arrs_nc.append(
+                        np.array([-1e-1, 1e-1], dtype=self.dtype))
                     crd_arrs_cc.append(np.array([0.0], dtype=self.dtype))
                 else:
                     crd_arrs_nc.append(np.array([0.0], dtype=self.dtype))
                     crd_arrs_cc.append(np.array([0.0], dtype=self.dtype))
 
         crd_arrs = crd_arrs_cc if cc else crd_arrs_nc
-        idx_sel_list = list(sliceutil.std_sel_list2index(std_sel_list, crd_arrs))
+        idx_sel_list = list(
+            sliceutil.std_sel_list2index(std_sel_list, crd_arrs))
 
         # Figure out what the sel_list is doing. If the slice reduces
         # out a dimension, put it in reduced. Also apply the slices to
@@ -944,7 +960,8 @@ class StructuredCrds(Coordinates):
         if axes is None:
             axes = list(self.axes)
 
-        axes = [self.axes[a] if isinstance(a, (int, np.int)) else a for a in axes]
+        axes = [self.axes[a] if isinstance(
+            a, (int, np.int)) else a for a in axes]
         axes = [a.upper() if shaped else a for a in axes]
 
         sfx = self._CENTER[center.lower()]
@@ -1001,7 +1018,8 @@ class StructuredCrds(Coordinates):
         if axes is None:
             axes = self.axes
 
-        ret = [[axis, self.get_crd(axis, center=center)[slc].copy()] for axis in axes]
+        ret = [[axis, self.get_crd(axis, center=center)[
+            slc].copy()] for axis in axes]
 
         # # slc was never None, what was this for?
         # if slc is None and full_arrays and center == 'node' and self._src_crds_cc:
@@ -1010,7 +1028,7 @@ class StructuredCrds(Coordinates):
         #             ret[i].append(self._src_crds_cc[axis].copy())
         return ret
 
-    ## These methods just return one crd axis
+    # These methods just return one crd axis
     def get_nc(self, axis, shaped=False):
         """returns a flat ndarray of coordinates along a given axis
         axis can be crd name as string, or index, as in x==2, y==1, z==2
@@ -1035,7 +1053,7 @@ class StructuredCrds(Coordinates):
         """
         return self.get_crd(axis, shaped=shaped, center="edge")
 
-    ## These methods return all crd axes
+    # These methods return all crd axes
     def get_crds_nc(self, axes=None, shaped=False):
         """returns all node centered coords as a list of ndarrays, flat if
         shaped==False, or shaped if shaped==True
@@ -1404,7 +1422,8 @@ class UniformCrds(StructuredCrds):
         assert len(self._nc_linspace_args) == len(self._axes)
         self._src_crds_nc = {}
         for ax, p in zip(self._axes, self._nc_linspace_args):
-            self._src_crds_nc[ax] = np.linspace(p[0], p[1], p[2]).astype(self.dtype)
+            self._src_crds_nc[ax] = np.linspace(
+                p[0], p[1], p[2]).astype(self.dtype)
         return super(UniformCrds, self)._fill_crds_dict()
 
 
@@ -1464,6 +1483,7 @@ class UnstructuredCrds(Coordinates):
         super(UnstructuredCrds, self).__init__(**kwargs)
         raise NotImplementedError()
 
+
 def _main():
     print("full array")
     x = np.arange(4)
@@ -1494,9 +1514,10 @@ def _main():
     print(np.linspace(*viscid.extend_arr(x, full_arr=False, n=2)))
     print(np.linspace(*viscid.extend_arr(x, full_arr=False, n=(2, 3))))
 
+
 if __name__ == "__main__":
     _main()
 
 ##
-## EOF
+# EOF
 ##

@@ -103,11 +103,13 @@ def _format_unit(unit, base=DATETIME_BASE):
     else:
         return base
 
+
 def _as_dtype(t):
     if isinstance(t, np.dtype):
         return t
     else:
         return t.dtype
+
 
 def _get_base_unit(t):
     name = _as_dtype(t).name
@@ -115,17 +117,22 @@ def _get_base_unit(t):
     unit = name[name.rfind('[') + 1:name.rfind(']')]
     return base, unit
 
+
 def _get_unit(t):
     return _get_base_unit(t)[1]
+
 
 def _is_datetime64(t):
     return _as_dtype(t).type == np.datetime64
 
+
 def _is_dateunit(t):
     return _is_datetime64(t) and _get_unit(t) in DATE_UNITS
 
+
 def _is_timeunit(t):
     return _is_datetime64(t) and _get_unit(t) in TIME_UNITS
+
 
 def _as_datetime64_scalar(time, unit=None):
     unit_args = [unit] if unit else []
@@ -150,14 +157,16 @@ def _as_datetime64_scalar(time, unit=None):
         scalar = np.datetime64(time, *unit_args)
     return scalar
 
+
 def _as_timedelta64_scalar(time, unit=None):
     unit_args = [unit] if unit else []
     flt_unit = unit if unit else 's'
     # turn 'H:M:S.ms', 'M:S.ms', 'S.ms' into floating point seconds
-    if isinstance(time, string_types):# and ':' in time:
+    if isinstance(time, string_types):  # and ':' in time:
         time = [float(t) for t in time.lstrip('T').split(':')][::-1]
         if len(time) > 1 and unit is not None:
-            raise ValueError("When giving time as a string, units are automatic")
+            raise ValueError(
+                "When giving time as a string, units are automatic")
         if len(time) > 3:
             raise ValueError("Timedelta as string only goes up to hours")
         t_flt = 0.0
@@ -183,6 +192,7 @@ def _as_timedelta64_scalar(time, unit=None):
         time = np.timedelta64(int(np.round(time)), flt_unit)
         unit, unit_args = flt_unit, [flt_unit]
     return np.timedelta64(time, *unit_args)
+
 
 def as_isotime(time):
     """Try to convert times in string format to ISO 8601
@@ -239,6 +249,7 @@ def as_isotime(time):
         else:
             return ret
 
+
 def as_datetime64(time, unit=None):
     """Convert to a Numpy datetime64 scalar or array
 
@@ -262,6 +273,7 @@ def as_datetime64(time, unit=None):
         time = _as_datetime64_scalar(time, unit=unit)
     return time
 
+
 def as_timedelta64(time, unit=None):
     """Convert to a timedelta64 type
 
@@ -280,6 +292,7 @@ def as_timedelta64(time, unit=None):
         time = _as_timedelta64_scalar(time, unit=unit)
     return time
 
+
 def as_datetime(time, unit=None):
     """Convert time to a Numpy ndarray of datetime.datetime objects
 
@@ -296,6 +309,7 @@ def as_datetime(time, unit=None):
     except ValueError:
         dt64 = as_datetime64(as_timedelta64(time, unit=unit))
     return round_time(dt64, 'us').astype(datetime)
+
 
 def as_timedelta(time, unit=None, allow0=True):
     """Convert time to a Numpy ndarray of datetime.datetime objects
@@ -321,6 +335,7 @@ def as_timedelta(time, unit=None, allow0=True):
         ret = np.array([TimeDeltaCompat(r) for r in ret])
     return ret
 
+
 def asarray_datetime64(arr, unit=None, conservative=False):
     """If is_valid_datetime64, then return a datetime64 array
 
@@ -341,6 +356,7 @@ def asarray_datetime64(arr, unit=None, conservative=False):
         except ValueError:
             return np.asarray(arr)
 
+
 def linspace_datetime64(start, stop, n, endpoint=True, unit=None):
     """Make an evenly space ndarray from start to stop with n values"""
     start = as_datetime64(start, unit=unit)
@@ -350,6 +366,7 @@ def linspace_datetime64(start, stop, n, endpoint=True, unit=None):
     fltarr = np.linspace(start.astype('i8'), stop.astype('i8'), n,
                          endpoint=endpoint, dtype='f8')
     return np.round(fltarr, 0).astype('i8').astype(start.dtype)
+
 
 def _most_precise_t_unit(tlst):
     """Find the most precise time unit from the bunch
@@ -363,6 +380,7 @@ def _most_precise_t_unit(tlst):
     units = [_get_base_unit(t)[1] for t in tlst]
     unit_idx = [ORDERED_UNITS.index(u) for u in units]
     return units[np.argmin(unit_idx)]
+
 
 def _adjust_t_unit(t, unit, cfunc=None, allow0=True):
     """adjust the unit of t using cfunc
@@ -405,7 +423,8 @@ def _adjust_t_unit(t, unit, cfunc=None, allow0=True):
                                     "because it overflowed into the sign bit ({2})."
                                     "".format(str(t), unit, str(t1)))
         except ValueError:
-            import viscid; viscid.interact()
+            import viscid
+            viscid.interact()
             raise
     else:
         # we want a less precise unit, i.e., round t to the new unit... raise
@@ -416,6 +435,7 @@ def _adjust_t_unit(t, unit, cfunc=None, allow0=True):
                                  "rounded to the nearest '{1}'"
                                  "".format(str(t), unit))
     return t1
+
 
 def round_time(tlst, unit, allow0=True):
     """Round a time or list of times to minimum level of coarseness
@@ -463,6 +483,7 @@ def round_time(tlst, unit, allow0=True):
             return np.asarray(ret)
         else:
             return ret
+
 
 def regularize_time(tlst, unit=None, most_precise=False, allow_rounding=True,
                     allow0=True):
@@ -543,6 +564,7 @@ def regularize_time(tlst, unit=None, most_precise=False, allow_rounding=True,
         else:
             return ret
 
+
 def time_sum(t0, tdelta, unit=None, most_precise=False, allow_rounding=True,
              allow0=True):
     """Add timedelta64 to datetime64 at highest precision w/o overflow
@@ -579,6 +601,7 @@ def time_sum(t0, tdelta, unit=None, most_precise=False, allow_rounding=True,
                                  allow0=allow0)
     return t0 + tdelta
 
+
 def time_diff(t1, t2, unit=None, most_precise=False):
     """Diff two datetime64s at highest precision w/o overflow
 
@@ -603,6 +626,7 @@ def time_diff(t1, t2, unit=None, most_precise=False):
     t1, t2 = regularize_time([t1, t2], unit=unit, most_precise=most_precise)
     return t1 - t2
 
+
 def is_valid_datetime64(arr, unit=None):
     """Returns True iff arr can be made into a datetime64 array"""
     try:
@@ -610,6 +634,7 @@ def is_valid_datetime64(arr, unit=None):
         return True
     except ValueError:
         return False
+
 
 def is_valid_timedelta64(arr, unit=None):
     """Returns True iff arr can be made into a timedelta64 array"""
@@ -619,6 +644,7 @@ def is_valid_timedelta64(arr, unit=None):
     except ValueError:
         return False
 
+
 def datetime_as_seconds(a, decimals=0, unit=None):
     """round datetime a to the nearest decimals seconds"""
     a_as_dt64 = as_datetime64(a, unit=unit)
@@ -626,6 +652,7 @@ def datetime_as_seconds(a, decimals=0, unit=None):
     frac = time_diff(a_as_dt64, _epoch) / np.timedelta64(1, 's')
     rounded = np.round(frac, decimals)
     return as_datetime64(_epoch + as_timedelta64(rounded, unit='s'))
+
 
 def timedelta_as_seconds(a, decimals=0, unit=None):
     """round timedelta a to the nearest decimals seconds
@@ -637,6 +664,7 @@ def timedelta_as_seconds(a, decimals=0, unit=None):
     rounded = np.round(a_td64 / as_timedelta64(1, 's'), decimals)
     return as_timedelta64(rounded, unit='s')
 
+
 def time_as_seconds(a, decimals=0, unit=None):
     """round a to the nearest decimal seconds"""
     if is_datetime_like(a):
@@ -646,9 +674,11 @@ def time_as_seconds(a, decimals=0, unit=None):
     else:
         return np.round(a, decimals=decimals)
 
+
 def format_datetime(time, fmt="%Y-%m-%d %H:%M:%S.%.02f"):
     """Shortcut to :py:func:`format_time` for a datetime format"""
     return format_time(time, fmt=fmt)
+
 
 def format_time(time, fmt='.02f', basetime=None):
     """Format time as a string
@@ -726,6 +756,7 @@ def format_time(time, fmt='.02f', basetime=None):
         ret = tstr
     return ret
 
+
 def _check_like(val, _np_types, _native_types, check_str=None):  # pylint: disable=too-many-return-statements
     """
     Checks the follwing:
@@ -757,6 +788,7 @@ def _check_like(val, _np_types, _native_types, check_str=None):  # pylint: disab
     else:
         return False
 
+
 def datetime64_as_years(time):
     """Get time as floating point years since the year 0"""
     time = as_datetime64(time)
@@ -765,6 +797,7 @@ def datetime64_as_years(time):
     tdelta = time_diff(time, epoch, most_precise=True)
     years = tdelta / np.timedelta64(1, 'D') / 365.242 + epoch_year
     return years
+
 
 def is_datetime_like(val, conservative=False):  # pylint: disable=unused-argument
     """Returns True iff val is datetime-like"""
@@ -778,6 +811,7 @@ def is_datetime_like(val, conservative=False):  # pylint: disable=unused-argumen
             pass
     return _check_like(val, (np.datetime64, ), (datetime, ),
                        is_valid_datetime64)
+
 
 def is_timedelta_like(val, conservative=False):
     """Returns True iff val is timedelta-like"""
@@ -796,10 +830,12 @@ def is_timedelta_like(val, conservative=False):
         return _check_like(val, (np.timedelta64, np.floating, np.integer),
                            (timedelta, float, int), is_valid_timedelta64)
 
+
 def is_time_like(val, conservative=False):
     """Returns True iff val is datetime-like or timedelta-like"""
     return (is_datetime_like(val, conservative=conservative) or
             is_timedelta_like(val, conservative=conservative))
+
 
 to_datetime64 = as_datetime64
 to_timedelta64 = as_timedelta64
@@ -903,13 +939,14 @@ def _main():
     # TEST linspace_datetime64
     #
     lst = linspace_datetime64(as_datetime64('1930-03-04'),
-                               as_datetime64('2010-02-14T12:30:00'),
-                               10)
+                              as_datetime64('2010-02-14T12:30:00'),
+                              10)
     print(lst, lst.dtype)
+
 
 if __name__ == "__main__":
     sys.exit(_main())
 
 ##
-## EOF
+# EOF
 ##

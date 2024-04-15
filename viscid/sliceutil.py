@@ -63,6 +63,7 @@ def prune_comp_sel(sel_list, comp_names):
 
     return sel_list, comp_slc
 
+
 def raw_sel2sel_list(sel):
     """Turn generic selection into something standard we can work with
 
@@ -138,11 +139,12 @@ def raw_sel2sel_list(sel):
                                  "ambiguous otherwise.")
     return sel_list
 
+
 def fill_nd_sel_list(sel_list, ax_names):
     """fully determine a sparsely selected sel_list"""
 
     if (len(sel_list) == 1 and not isinstance(sel_list[0], np.ndarray)
-        and sel_list in ([Ellipsis], ['...'], ['Ellipsis'], ['ellipsis'])):
+            and sel_list in ([Ellipsis], ['...'], ['Ellipsis'], ['ellipsis'])):
         # short circuit all logic if sel_list == [Ellipsis]
         full_sel_list = [slice(None) for _ in ax_names]
         full_ax_names = [name for name in ax_names]
@@ -167,7 +169,7 @@ def fill_nd_sel_list(sel_list, ax_names):
         if isinstance(s, (list, np.ndarray)):
             pass
         elif s in (Ellipsis, ) or (isinstance(s, string_types)
-                                 and s.strip().lower() in ('ellipsis', '...')):
+                                   and s.strip().lower() in ('ellipsis', '...')):
             sel_list[i] = Ellipsis
             if ellipsis_idx < 0:
                 ellipsis_idx = i
@@ -267,6 +269,7 @@ def fill_nd_sel_list(sel_list, ax_names):
 
 #######################################################################
 
+
 def _warn_deprecated_float(val, varname='value'):
     global _emit_deprecated_float_warning  # pylint: disable=global-statement
     if _emit_deprecated_float_warning:
@@ -281,9 +284,11 @@ def _warn_deprecated_float(val, varname='value'):
         logger.warning(s)
         _emit_deprecated_float_warning = False
 
+
 def _is_time_str(s):
     m = re.match(_R_DTIME, s)
     return m is not None and m.end() - m.start() == len(s)
+
 
 def _split_slice_str(sel):
     all_times = re.findall(_R_DTIME_SLC, sel)
@@ -295,11 +300,13 @@ def _split_slice_str(sel):
 
 #######################################################################
 
+
 def standardize_sel_list(sel_list):
     """turn all selection list elements into fundamental python types"""
     for i, sel in enumerate(sel_list):
         sel_list[i] = standardize_sel(sel)
     return sel_list
+
 
 def standardize_sel(sel):
     """turn selection list element into fundamental python types"""
@@ -323,6 +330,7 @@ def standardize_sel(sel):
     else:
         sel = standardize_value(sel, bool_argwhere=True)
     return sel
+
 
 def standardize_value(sel, bool_argwhere=False):
     """Turn a value element to fundamental type or array
@@ -404,9 +412,11 @@ def standardize_value(sel, bool_argwhere=False):
                     sel = 1j * sel
                 elif all(_is_time_str(s) for s in sel.split()):
                     try:
-                        sel = as_timedelta64([s.lstrip('ut') for s in sel.split()])
+                        sel = as_timedelta64([s.lstrip('ut')
+                                             for s in sel.split()])
                     except ValueError:
-                        sel = as_datetime64([s.lstrip('ut') for s in sel.split()])
+                        sel = as_datetime64([s.lstrip('ut')
+                                            for s in sel.split()])
                 elif 'e' in sel or 'E' in sel:
                     _warn_deprecated_float(sel)
                     sel = np.fromstring(sel, dtype=np.float, sep=' ')
@@ -442,6 +452,7 @@ def standardize_value(sel, bool_argwhere=False):
 
 #######################################################################
 
+
 def std_sel_list2index(std_sel_list, crd_arrs, val_endpoint=True, interior=False,
                        tdunit='s', epoch=None, tol=100):
     """turn standardized selection list into index slice"""
@@ -449,6 +460,7 @@ def std_sel_list2index(std_sel_list, crd_arrs, val_endpoint=True, interior=False
                           interior=interior, tdunit=tdunit, epoch=epoch)
             for std_sel, crd_arr in zip(std_sel_list, crd_arrs)
             ]
+
 
 def std_sel2index(std_sel, crd_arr, val_endpoint=True, interior=False,
                   tdunit='s', epoch=None):
@@ -503,7 +515,7 @@ def std_sel2index(std_sel, crd_arr, val_endpoint=True, interior=False,
         sgn = np.sign(ustep)
 
         if (isinstance(std_sel.start, (int, np.integer, type(None)))
-            and not isinstance(std_sel.start, (np.datetime64, np.timedelta64))):
+                and not isinstance(std_sel.start, (np.datetime64, np.timedelta64))):
             ustart = std_sel.start
         else:
             ustart, tol = _unify_sbv_types(std_sel.start, crd_arr, tdunit='s',
@@ -531,7 +543,7 @@ def std_sel2index(std_sel, crd_arr, val_endpoint=True, interior=False,
                 ustart = np.argmin(np.abs(diff))
 
         if (isinstance(std_sel.stop, (int, np.integer, type(None)))
-            and not isinstance(std_sel.stop, (np.datetime64, np.timedelta64))):
+                and not isinstance(std_sel.stop, (np.datetime64, np.timedelta64))):
             ustop = std_sel.stop
         else:
             ustop, tol = _unify_sbv_types(std_sel.stop, crd_arr, tdunit='s',
@@ -577,7 +589,7 @@ def std_sel2index(std_sel, crd_arr, val_endpoint=True, interior=False,
         # slice by single value or ndarray of single values (int, float, times)
         usel, _ = _unify_sbv_types(std_sel, crd_arr, tdunit='s', epoch=epoch)
         if (isinstance(usel, (int, np.integer, type(None)))
-            and not isinstance(usel, (np.datetime64, np.timedelta64))):
+                and not isinstance(usel, (np.datetime64, np.timedelta64))):
             idx = usel
         elif isinstance(usel, np.ndarray):
             if isinstance(usel[0, 0], np.integer):
@@ -588,6 +600,7 @@ def std_sel2index(std_sel, crd_arr, val_endpoint=True, interior=False,
             idx = np.argmin(np.abs(crd_arr - usel))
 
     return idx
+
 
 def _unify_sbv_types(std_val, crd_arr, tdunit='s', epoch=None):
     uval = None
@@ -670,6 +683,7 @@ def _unify_sbv_types(std_val, crd_arr, tdunit='s', epoch=None):
 
     return uval, tol
 
+
 def _interiorize_slice(arr, start_val, stop_val, start, stop, step,
                        verify=True):
     """Ensure start_val and stop_val interior to the sliced array
@@ -739,9 +753,11 @@ def _interiorize_slice(arr, start_val, stop_val, start, stop, step,
 
 #######################################################################
 
+
 def raw_sel2values(arrs, selection, epoch=None, tdunit='s'):
     return sel_list2values(arrs, raw_sel2sel_list(selection),
                            epoch=epoch, tdunit=tdunit)
+
 
 def sel_list2values(arrs, sel_list, epoch=None, tdunit='s'):
     """find the extrema values for a given sel list"""
@@ -749,6 +765,7 @@ def sel_list2values(arrs, sel_list, epoch=None, tdunit='s'):
         arrs = [None] * len(sel_list)
     return [sel2values(arr, sel, epoch=epoch, tdunit=tdunit)
             for arr, sel in zip(arrs, sel_list)]
+
 
 def sel2values(arr, sel, epoch=None, tdunit='s'):
     """find the extrema values for a given selection
@@ -821,16 +838,19 @@ def sel2values(arr, sel, epoch=None, tdunit='s'):
             else:
                 ret = tuple([arr[std_sel]] * 2)
         else:
-            uval, _ = _unify_sbv_types(std_sel, arr, tdunit=tdunit, epoch=epoch)
+            uval, _ = _unify_sbv_types(
+                std_sel, arr, tdunit=tdunit, epoch=epoch)
             ret = tuple([uval] * 2)
 
     return ret
+
 
 selection2values = sel2values
 
 #######################################################################
 
 # FIXME: is this graceful on slice-by-ndarray?
+
 
 def make_fwd_slice(shape, slices, reverse=None, cull_second=True):
     """Make sure slices go forward
@@ -966,7 +986,8 @@ def make_fwd_slice(shape, slices, reverse=None, cull_second=True):
             assert start is None or (start >= 0 and start <= L), \
                 "start (={0}) is outside range".format(start)
             assert start is None or stop is None or start == stop == 0 or \
-                start < stop, "bad slice ordering: {0} !< {1}".format(start, stop)
+                start < stop, "bad slice ordering: {0} !< {1}".format(
+                    start, stop)
             assert step > 0
             slc = slice(start, stop, step)
 
@@ -988,11 +1009,13 @@ def make_fwd_slice(shape, slices, reverse=None, cull_second=True):
 
 #######################################################################
 
+
 def all_slices_none(slices):
     '''true iff all slices have no effect'''
     return all(not isinstance(s, (list, np.ndarray))
                and s in (slice(None), slice(None, None, 1))
                for s in slices)
+
 
 def _user_written_stack_frame():
     """get the frame of first stack frame outside Viscid"""
@@ -1006,5 +1029,5 @@ def _user_written_stack_frame():
     return frame_info
 
 ##
-## EOF
+# EOF
 ##

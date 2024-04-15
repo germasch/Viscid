@@ -65,7 +65,7 @@ pkgs = ['viscid',
         'viscid.compat.futures',
         'viscid.plot',
         'viscid.readers'
-       ]
+        ]
 
 scripts = glob(os.path.join('scripts', '*'))
 
@@ -87,27 +87,27 @@ cy_defs = []
 cy_defs.append(["viscid.cython.cycalc",
                 ["viscid/cython/cycalc"],
                 dict()
-               ])
+                ])
 cy_defs.append(["viscid.cython.integrate",
                 ["viscid/cython/integrate"],
                 dict()
-               ])
+                ])
 cy_defs.append(["viscid.cython.streamline",
                 ["viscid/cython/streamline"],
                 dict()
-               ])
+                ])
 cy_defs.append(["viscid.cython.null_tools",
                 ["viscid/cython/null_tools"],
                 dict()
-               ])
+                ])
 cy_defs.append(["viscid.cython.cyfield",
                 ["viscid/cython/cyfield"],
                 dict()
-               ])
+                ])
 cy_defs.append(["viscid.cython.cyamr",
                 ["viscid/cython/cyamr"],
                 dict()
-               ])
+                ])
 
 fort_fcflags = []
 fort_ldflags = os.environ.get('F_LDFLAGS', '').split()
@@ -119,7 +119,7 @@ fort_defs = []
 fort_defs.append(["viscid.readers._jrrle",
                   ["viscid/readers/_fortfile.F90", "viscid/readers/_jrrle.f90"],
                   dict(define_macros=[("FSEEKABLE", 1), ("HAVE_STREAM", 1)])
-                 ])
+                  ])
 
 ############################################################################
 # below this line shouldn't need to be changed except for version and stuff
@@ -144,7 +144,7 @@ if sys.platform[:5] == 'linux':
 
 # hack to use proper flags for python2.7 / numpy 1.11 windows conda-forge build
 if (sys.platform[:3] == 'win' and sys.version_info[:2] == (2, 7)
-    and 'CONDA_BUILD_STATE' in os.environ):
+        and 'CONDA_BUILD_STATE' in os.environ):
     mandatory_fcflags = ['-O3', '-funroll-loops']
     for flag in mandatory_fcflags:
         fort_fcflags.append(flag)
@@ -246,6 +246,7 @@ for i, d in enumerate(cy_defs):
             cy_defs[i] = None
             break
 
+
 def clean_pyc_files(dry_run=False):
     """remove all .pyc / .pyo files"""
     cwd = os.getcwd()
@@ -259,6 +260,7 @@ def clean_pyc_files(dry_run=False):
                             os.remove(os.path.join(root, name))
     else:
         print("Not in Viscid directory, not cleaning pyc/pyo files")
+
 
 def clean_other_so_files(valid_so_list, dry_run=False):
     """remove all .pyc / .pyo files"""
@@ -322,11 +324,14 @@ class Clean(clean):
                                     log.info("removing '{0}'".format(fn))
                                     os.unlink(fn)
 
+
 cmdclass["clean"] = Clean
 
 
 build_ext_ran = False
 build_ext_failed = False
+
+
 class BuildExt(build_ext):
     def run(self, *args, **kwargs):
         global build_ext_ran
@@ -342,6 +347,8 @@ class BuildExt(build_ext):
             global build_ext_failed
             build_ext_failed = True
             print(e, file=sys.stderr)
+
+
 cmdclass["build_ext"] = BuildExt
 
 # make cython extension instances
@@ -392,7 +399,8 @@ else:
 
             libgfortran_dir = None
             if libgfortran_name:
-                find_lib_arg = ['-print-file-name={0}'.format(libgfortran_name)]
+                find_lib_arg = [
+                    '-print-file-name={0}'.format(libgfortran_name)]
                 status, output = exec_command(compiler_args + find_lib_arg,
                                               use_tee=0)
                 if not status:
@@ -470,10 +478,12 @@ def get_viscid_version(init_py):
             if m:
                 return m.groups()[1]
 
+
 try:
     data_files = []
     data_files += [('viscid/plot/images', glob("viscid/plot/images/*.jpg"))]
-    data_files += [('viscid/plot/styles', glob('viscid/plot/styles/*.mplstyle'))]
+    data_files += [('viscid/plot/styles',
+                    glob('viscid/plot/styles/*.mplstyle'))]
     for dirpath, _, fnames in os.walk('viscid/sample'):
         fnames = [os.path.join(dirpath, fname)
                   for fname in fnames if not fname.startswith('.')]
@@ -520,7 +530,7 @@ try:
               "Topic :: Scientific/Engineering :: Physics",
               "Topic :: Scientific/Engineering :: Visualization",
           ),
-         )
+          )
 
     # if installed, store list of installed files in a json file - this
     # manifest is used to implement an uninstall
@@ -534,7 +544,8 @@ try:
         with open(RECORD_FNAME) as fin:
             file_list = [line.strip() for line in fin]
 
-        init_pys = [s for s in file_list if '__init__.py' in s or s.endswith('.egg')]
+        init_pys = [
+            s for s in file_list if '__init__.py' in s or s.endswith('.egg')]
         pkg_instdir = os.path.dirname(min(init_pys, key=len))
 
         inst_manifest[sys.executable] = dict(pkg_instdir=pkg_instdir,
@@ -584,5 +595,5 @@ if build_ext_ran and build_ext_failed:
           "\n", file=sys.stderr)
 
 ##
-## EOF
+# EOF
 ##
