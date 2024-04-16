@@ -238,7 +238,7 @@ cdef real_t _c_interp_nearest(FusedField fld, int m, real_t x[3],
 
 
 cdef inline int closest_preceeding_ind(FusedField fld, int m, int d, real_t value,
-                                       int cached_idx3[3]) nogil except -1:
+                                       int cached_idx3[3]) except -1 nogil:
     """Index of the element closest (and to the left) of x = value
 
     Note:
@@ -289,7 +289,7 @@ cdef inline int closest_preceeding_ind(FusedField fld, int m, int d, real_t valu
     return ind
 
 cdef inline int closest_ind(FusedField fld, int m, int d, real_t value,
-                            int cached_idx3[3]) nogil except -1:
+                            int cached_idx3[3]) except -1 nogil:
     cdef double d1, d2
     cdef int preceeding_ind = closest_preceeding_ind(fld, m, d, value, cached_idx3)
     if preceeding_ind == fld.n[d] - 1:

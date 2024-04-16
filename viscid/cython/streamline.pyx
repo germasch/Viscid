@@ -365,7 +365,7 @@ def _py_streamline(FusedAMRField amrfld, FusedField active_patch,
         int (*integrate_func)(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                               real_t max_error, real_t smallest_ds,
                               real_t largest_ds, real_t vscale[3],
-                              int cached_idx3[3]) nogil except -1
+                              int cached_idx3[3]) except -1 nogil
         int (*end_flags_to_topology)(int _end_flags) nogil
 
         int i, j, it

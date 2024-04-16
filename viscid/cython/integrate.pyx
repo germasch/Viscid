@@ -33,7 +33,7 @@ cdef extern from *:
 
 cdef int _c_euler1(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                    real_t max_error, real_t smallest_ds, real_t largest_ds,
-                   real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                   real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Simplest 1st order euler integration"""
     cdef real_t v[3]
     cdef real_t vmag
@@ -56,7 +56,7 @@ cdef int _c_euler1(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
 
 cdef int _c_rk2(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                 real_t max_error, real_t smallest_ds, real_t largest_ds,
-                real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Runge-Kutta midpoint 2nd order integrator
 
     To get the point x^{l+1} from x^l (note that k_i and x_i are
@@ -128,7 +128,7 @@ cdef int _c_rk2(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
 
 cdef int _c_rk4(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                 real_t max_error, real_t smallest_ds, real_t largest_ds,
-                real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Runge-Kutta 4th order integrator
 
     To get the point x^{l+1} from x^l (note that k_i and x_i are
@@ -287,7 +287,7 @@ cdef inline int _ts_ctrl(real_t *ds, real_t error_estimate, real_t max_error,
 
 cdef int _c_euler1a(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                     real_t max_error, real_t smallest_ds, real_t largest_ds,
-                    real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                    real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Adaptive euler, estimates error with a backward step"""
     # k's have same units as ds
     cdef real_t k1[3]
@@ -363,7 +363,7 @@ cdef int _c_euler1a(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
 
 cdef int _c_rk12(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                  real_t max_error, real_t smallest_ds, real_t largest_ds,
-                 real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                 real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Runge-Kutta adaptive midpoint 1st order integrator
 
     To get the point x^{l+1} from x^l (note that k_i and x_i are
@@ -461,7 +461,7 @@ cdef int _c_rk12(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
 
 cdef int _c_rk45(FusedField fld, real_t x[3], real_t *ds, real_t *dt,
                  real_t max_error, real_t smallest_ds, real_t largest_ds,
-                 real_t vscale[3], int cached_idx3[3]) nogil except -1:
+                 real_t vscale[3], int cached_idx3[3]) except -1 nogil:
     """Runge-Kutta-Fehlberg adaptive 4th order integrator
 
     To get the point x^{l+1} from x^l (note that k_i and x_i are
