@@ -1,4 +1,4 @@
-# cython: boundscheck=False, wraparound=False, cdivision=True, profile=False
+# cython: boundscheck=False, wraparound=False, cdivision=True, cpow=True, profile=False
 # cython: emit_code_comments=False
 
 """3D Integrators of Vector Fields with 3 Components"""
