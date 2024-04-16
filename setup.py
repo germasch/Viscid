@@ -92,10 +92,10 @@ cy_defs.append(["viscid.cython.integrate",
                 ["viscid/cython/integrate"],
                 dict()
                 ])
-cy_defs.append(["viscid.cython.streamline",
-                ["viscid/cython/streamline"],
-                dict()
-                ])
+# cy_defs.append(["viscid.cython.streamline",
+#                 ["viscid/cython/streamline"],
+#                 dict()
+#                 ])
 cy_defs.append(["viscid.cython.null_tools",
                 ["viscid/cython/null_tools"],
                 dict()
