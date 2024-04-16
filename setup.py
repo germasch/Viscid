@@ -363,7 +363,7 @@ for d in cy_defs:
     ext_mods += [_ext]
 
 if has_cython and use_cython:
-    ext_mods = cythonize(ext_mods, nthreads=_nprocs)
+    ext_mods = cythonize(ext_mods, nthreads=_nprocs, language_level="3")
 
 # make fortran extension instances
 try:
