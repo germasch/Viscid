@@ -960,8 +960,7 @@ class StructuredCrds(Coordinates):
         if axes is None:
             axes = list(self.axes)
 
-        axes = [self.axes[a] if isinstance(
-            a, (int, np.int)) else a for a in axes]
+        axes = [self.axes[a] if isinstance(a, int) else a for a in axes]
         axes = [a.upper() if shaped else a for a in axes]
 
         sfx = self._CENTER[center.lower()]

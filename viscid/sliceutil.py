@@ -79,7 +79,7 @@ def raw_sel2sel_list(sel):
         ValueError: slice-by-array not 1D
     """
     # type(None) includes np.newaxis
-    valid_types = (slice, int, np.integer, float, np.floating, complex, np.complex,
+    valid_types = (slice, int, np.integer, float, np.floating, complex,
                    np.complexfloating, datetime, np.datetime64, timedelta,
                    np.timedelta64, type(Ellipsis), type(None))
 
@@ -121,7 +121,7 @@ def raw_sel2sel_list(sel):
                               or np.issubdtype(s.dtype, np.complexfloating)
                               or np.issubdtype(s.dtype, np.bool_))
             if not is_valid_dtype:
-                if s.dtype == np.object:
+                if s.dtype == object:
                     raise IndexError("Slice interpreted as slice-by-array of "
                                      "object dtype. If you did\nnot intend to "
                                      "slice-by-array, then you probably gave "
@@ -356,14 +356,14 @@ def standardize_value(sel, bool_argwhere=False):
         pass
     elif isinstance(sel, (int, np.integer)):
         pass
-    elif isinstance(sel, (complex, np.complex, np.complexfloating)):
+    elif isinstance(sel, (complex, np.complexfloating)):
         assert sel.real == 0.0
     elif isinstance(sel, (float, np.floating)):
         _warn_deprecated_float(sel)
         sel = 1j * sel
     elif isinstance(sel, (list, np.ndarray)):
         assert len(sel.shape) == 1
-        assert isinstance(sel[0], (int, bool, np.integer, np.complex,
+        assert isinstance(sel[0], (int, bool, np.integer, complex,
                                    np.complexfloating, np.bool_))
         if bool_argwhere and isinstance(sel[0], (bool, np.bool_)):
             sel = np.argwhere(sel).reshape(-1)
@@ -401,7 +401,7 @@ def standardize_value(sel, bool_argwhere=False):
                 n_js = sel.count('j')
                 if n_js > 0:
                     _orig_sel = sel
-                    sel = np.array(sel.split()).astype(np.complex)
+                    sel = np.array(sel.split()).astype(complex)
                     assert np.allclose(sel.real, 0.0)
                     sel = sel.imag
                     if sel.shape == ():
@@ -620,7 +620,7 @@ def _unify_sbv_types(std_val, crd_arr, tdunit='s', epoch=None):
         len_std_val = 1 if std_val.shape == () else len(std_val)
         std_val = std_val.reshape(1, len_std_val)
 
-        if isinstance(std_val[0, 0], (np.complex, np.complexfloating)):
+        if isinstance(std_val[0, 0], (np.complexfloating)):
             assert np.all(std_val.real == 0)
             std_val = std_val.imag
 

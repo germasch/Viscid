@@ -781,7 +781,7 @@ def _check_like(val, _np_types, _native_types, check_str=None):  # pylint: disab
                 return False
         return True
     elif hasattr(val, 'dtype'):
-        if val.dtype == np.object:
+        if val.dtype == object:
             return all(isinstance(v, _native_types) for v in val)
         else:
             return val.dtype.type in _np_types
